@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+.app{max-width:430px;margin:0 auto;background:var(--color-background-tertiary);min-height:100vh;padding-bottom:80px}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:17px;font-weight:500}
+.topbar .km-badge{font-size:12px;background:var(--color-background-secondary);padding:4px 10px;border-radius:20px;color:var(--color-text-secondary)}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:flex;z-index:200}
+.nav button{flex:1;padding:10px 4px 8px;border:none;background:transparent;cursor:pointer;font-size:10px;color:var(--color-text-secondary);display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s}
+.nav button.active{color:#1D9E75}
+.nav-icon{width:22px;height:22px}
+.page{display:none;padding:12px 14px}
+.page.active{display:block}
+.card{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:14px;margin-bottom:10px}
+.card h3{font-size:14px;font-weight:500;margin-bottom:10px;color:var(--color-text-secondary)}
+.moto-hero{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:18px 14px 14px;margin-bottom:10px;text-align:center}
+.moto-svg{width:380px;height:280px;margin:0 auto 10px}
+.moto-km{font-size:26px;font-weight:500;color:var(--color-text-primary)}
+.moto-km-label{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.circles-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.circle-item{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:12px 8px;text-align:center;cursor:pointer;transition:border-color .15s}
+.circle-item:hover{border-color:var(--color-border-secondary)}
+.circle-wrap{position:relative;width:60px;height:60px;margin:0 auto 6px}
+.circle-wrap svg{position:absolute;top:0;left:0;width:60px;height:60px;transform:rotate(-90deg)}
+.circle-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;line-height:1}
+.circle-label{font-size:11px;color:var(--color-text-secondary);line-height:1.3}
+.circle-pct{font-size:12px;font-weight:500;margin-top:2px}
+.mini-list{display:flex;flex-direction:column;gap:6px}
+.mini-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--color-background-secondary);border-radius:8px;font-size:13px}
+.mini-item .label{color:var(--color-text-primary);font-weight:500}
+.mini-item .date{color:var(--color-text-secondary);font-size:11px}
+.btn{display:block;width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:15px;font-weight:500;cursor:pointer;margin-top:10px;transition:opacity .15s}
+.btn:hover{opacity:.88}
+.btn-secondary{background:var(--color-background-secondary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary)}
+.btn-danger{background:#D85A30;color:#fff}
+.btn-sm{padding:7px 14px;font-size:13px;width:auto;display:inline-block}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:13px;color:var(--color-text-secondary);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px;font-family:var(--font-sans)}
+.form-group textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-row{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:10px}
+.check-row input[type=checkbox]{width:18px;height:18px;cursor:pointer}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.trip-active{background:linear-gradient(135deg,#E1F5EE,#9FE1CB);border:1px solid #5DCAA5;border-radius:var(--border-radius-lg);padding:14px;margin-bottom:10px;text-align:center}
+.trip-active .trip-time{font-size:22px;font-weight:500;color:#0F6E56}
+.trip-active .trip-info{font-size:13px;color:#0F6E56;margin-top:4px}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:500}
+.tag-green{background:#E1F5EE;color:#0F6E56}
+.tag-amber{background:#FAEEDA;color:#854F0B}
+.tag-red{background:#FCEBEB;color:#A32D2D}
+.history-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px;background:var(--color-background-secondary);border-radius:8px;margin-bottom:6px;cursor:pointer}
+.history-item:hover{background:var(--color-background-primary)}
+.hi-left{flex:1}
+.hi-title{font-size:14px;font-weight:500}
+.hi-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.hi-right{text-align:right}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--color-background-primary);border-radius:20px 20px 0 0;padding:20px 16px 30px;width:100%;max-width:430px;max-height:85vh;overflow-y:auto}
+.modal h2{font-size:16px;font-weight:500;margin-bottom:14px}
+.modal-close{float:right;background:var(--color-background-secondary);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--color-text-secondary)}
+.fuel-calc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-top:8px;font-size:13px}
+.fuel-calc .big{font-size:20px;font-weight:500;color:#1D9E75}
+.empty-state{text-align:center;padding:30px 20px;color:var(--color-text-secondary);font-size:14px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.tab{padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);white-space:nowrap;transition:all .15s}
+.tab.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:10px 0}
+</style>
+
+<div class="app" id="app">
+  <div class="topbar">
+    <h1>MotoTrack</h1>
+    <span class="km-badge" id="topbar-km">— km</span>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="moto-hero">
+      <div class="moto-svg">
+        <img src="https://garagem360.com.br/wp-content/uploads/2023/02/Kawasaki-Ninja-400-2023-1.jpg" alt="Moto Carenada" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <div class="moto-km" id="home-km">0</div>
+      <div class="moto-km-label">km no odômetro</div>
+    </div>
+
+    <div class="section-title">desgaste de componentes</div>
+    <div class="circles-grid" id="circles-grid"></div>
+
+    <div class="section-title">últimas substituições</div>
+    <div class="card" style="padding:10px">
+      <div class="mini-list" id="last-parts"></div>
+    </div>
+
+    <div class="section-title">últimos trajetos</div>
+    <div class="card" style="padding:10px">
+      <div class="mini-list" id="last-trips"></div>
+    </div>
+  </div>
+
+  <!-- TRAJETOS -->
+  <div class="page" id="page-trips">
+    <div id="trip-active-area"></div>
+    <div class="card">
+      <h3>registrar trajeto</h3>
+      <div id="trip-form">
+        <div class="form-group">
+          <label>odômetro no início (km)</label>
+          <input type="number" id="trip-odo-start" placeholder="ex: 12450">
+        </div>
+        <button class="btn" onclick="startTrip()">iniciar trajeto</button>
+      </div>
+    </div>
+    <div class="section-title">histórico de trajetos</div>
+    <div id="trips-history"></div>
+  </div>
+
+  <!-- PEÇAS -->
+  <div class="page" id="page-parts">
+    <div class="tabs">
+      <button class="tab active" onclick="setPartsTab('list',this)">componentes</button>
+      <button class="tab" onclick="setPartsTab('add',this)">registrar troca</button>
+    </div>
+    <div id="parts-list-tab">
+      <div id="parts-components"></div>
+    </div>
+    <div id="parts-add-tab" style="display:none">
+      <div class="card">
+        <h3>registrar substituição</h3>
+        <div class="form-group">
+          <label>componente</label>
+          <select id="part-select">
+            <option value="">selecionar componente...</option>
+            <option value="Óleo do Motor">Óleo do Motor</option>
+            <option value="Filtro de Óleo">Filtro de Óleo</option>
+            <option value="Fluido de Arrefecimento">Fluido de Arrefecimento</option>
+            <option value="Fluido de Freio">Fluido de Freio</option>
+            <option value="Corrente">Corrente</option>
+            <option value="Vela de Ignição">Vela de Ignição</option>
+            <option value="Filtro de Ar">Filtro de Ar</option>
+            <option value="Pastilha de Freio Dianteira">Pastilha de Freio Dianteira</option>
+            <option value="Pastilha de Freio Traseira">Pastilha de Freio Traseira</option>
+            <option value="Pneu Dianteiro">Pneu Dianteiro</option>
+            <option value="Pneu Traseiro">Pneu Traseiro</option>
+            <option value="outro">outro...</option>
+          </select>
+        </div>
+        <div class="form-group" id="part-custom-group" style="display:none">
+          <label>nome do componente</label>
+          <input type="text" id="part-custom" placeholder="ex: rolamento de roda">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>marca</label>
+            <input type="text" id="part-brand" placeholder="ex: Motul">
+          </div>
+          <div class="form-group">
+            <label>modelo/viscosidade</label>
+            <input type="text" id="part-model" placeholder="ex: 5100 10W40">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>odômetro atual (km)</label>
+          <input type="number" id="part-odo" placeholder="ex: 12680">
+        </div>
+        <div class="sep"></div>
+        <div class="section-title" style="margin-top:0">validade da troca</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>trocar em (km)</label>
+            <input type="number" id="part-km-limit" placeholder="ex: 3000">
+          </div>
+          <div class="form-group">
+            <label>ou em (meses)</label>
+            <input type="number" id="part-month-limit" placeholder="ex: 6">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>observações</label>
+          <textarea id="part-notes" placeholder="observações opcionais..."></textarea>
+        </div>
+        <button class="btn" onclick="savePart()">salvar substituição</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABASTECIMENTO -->
+  <div class="page" id="page-fuel">
+    <div class="card">
+      <h3>registrar abastecimento</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>combustível</label>
+          <select id="fuel-type">
+            <option value="Gasolina Comum">Gasolina Comum</option>
+            <option value="Gasolina Aditivada">Gasolina Aditivada</option>
+            <option value="Etanol">Etanol</option>
+            <option value="GNV">GNV</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>litros</label>
+          <input type="number" step="0.01" id="fuel-liters" placeholder="ex: 8.5">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>odômetro atual (km)</label>
+        <input type="number" id="fuel-odo" placeholder="ex: 12680">
+      </div>
+      <div class="form-group">
+        <label>posto</label>
+        <select id="fuel-station-select" onchange="fuelStationChanged()">
+          <option value="">selecionar posto...</option>
+          <option value="__new__">+ adicionar novo posto</option>
+        </select>
+      </div>
+      <div class="form-group" id="fuel-station-new-group" style="display:none">
+        <label>nome do posto</label>
+        <input type="text" id="fuel-station-new" placeholder="ex: Ipiranga Centro">
+      </div>
+      <div class="form-group">
+        <label>preço por litro (R$)</label>
+        <input type="number" step="0.01" id="fuel-price" placeholder="ex: 6.49">
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="fuel-full" onchange="renderFuelCalc()">
+        <label for="fuel-full">tanque completado</label>
+      </div>
+      <div id="fuel-calc-area"></div>
+      <button class="btn" onclick="saveFuel()">salvar abastecimento</button>
+    </div>
+    <div class="section-title">histórico</div>
+    <div id="fuel-history"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="active" onclick="showPage('home',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M3 12L12 4l9 8v8a1 1 0 01-1 1H5a1 1 0 01-1-1z"/>
+      <path d="M9 21V12h6v9"/>
+    </svg>
+    início
+  </button>
+  <button onclick="showPage('trips',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/>
+      <path d="M5 14V9l7-5 5 5 2 5M9 9l3 5"/>
+    </svg>
+    trajetos
+  </button>
+  <button onclick="showPage('parts',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3-3a6 6 0 01-7.9 7.9l-5.8 5.8a2 2 0 01-2.8-2.8l5.8-5.8a6 6 0 017.7-7.7z"/>
+    </svg>
+    peças
+  </button>
+  <button onclick="showPage('fuel',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M3 22V6a2 2 0 012-2h10a2 2 0 012 2v16M8 6v4m4-4v4M5 10h10M19 8l2 2v6l-2 2"/>
+    </svg>
+    abast.
+  </button>
+</nav>
+
+<!-- MODAL HISTÓRICO DE PEÇA -->
+<div class="modal-overlay" id="modal-part-history">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-part-history')">✕</button>
+    <h2 id="modal-part-title">histórico</h2>
+    <div id="modal-part-content"></div>
+  </div>
+</div>
+
+<!-- MODAL FIM DE TRAJETO -->
+<div class="modal-overlay" id="modal-end-trip">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-end-trip')">✕</button>
+    <h2>finalizar trajeto</h2>
+    <div class="form-group">
+      <label>odômetro no fim (km)</label>
+      <input type="number" id="trip-odo-end" placeholder="ex: 12520">
+    </div>
+    <div id="trip-calc-preview"></div>
+    <button class="btn" onclick="endTrip()">salvar trajeto</button>
+  </div>
+</div>
+</head>
+
+</html>
+
+<script>
+const ICONS = {
+  'Óleo do Motor':'🛢️','Filtro de Óleo':'🔵','Fluido de Arrefecimento':'🌡️',
+  'Fluido de Freio':'🔴','Corrente':'⛓️','Vela de Ignição':'⚡','Filtro de Ar':'🌀',
+  'Pastilha de Freio Dianteira':'🔶','Pastilha de Freio Traseira':'🔷',
+  'Pneu Dianteiro':'⚫','Pneu Traseiro':'⚫','default':'🔧'
+};
+
+let DB = {
+  odometer: 0,
+  trips: [],
+  parts: [],
+  fuels: [],
+  stations: [],
+  activeTrip: null
+};
+
+function save(){localStorage.setItem('mototrack_db',JSON.stringify(DB))}
+function load(){try{const d=localStorage.getItem('mototrack_db');if(d)DB=JSON.parse(d)}catch(e){}}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  renderAll();
+}
+
+function setPartsTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('parts-list-tab').style.display=tab==='list'?'block':'none';
+  document.getElementById('parts-add-tab').style.display=tab==='add'?'block':'none';
+  if(tab==='list')renderPartsComponents();
+}
+
+function fmt(d){return new Date(d).toLocaleDateString('pt-BR')}
+function fmtKm(k){return Number(k).toLocaleString('pt-BR')+' km'}
+
+function getIcon(name){return ICONS[name]||ICONS['default']}
+
+function getPartPct(p){
+  const now=Date.now();
+  const kmDone=DB.odometer-p.odo;
+  const daysElapsed=(now-p.date)/(1000*60*60*24);
+  let pcts=[];
+  if(p.kmLimit)pcts.push(Math.min(100,Math.round(kmDone/p.kmLimit*100)));
+  if(p.monthLimit)pcts.push(Math.min(100,Math.round(daysElapsed/(p.monthLimit*30)*100)));
+  return pcts.length?Math.max(...pcts):0;
+}
+
+function pctColor(pct){
+  if(pct>=90)return'#E24B4A';
+  if(pct>=65)return'#EF9F27';
+  return'#1D9E75';
+}
+
+function renderCircle(pct,color){
+  const r=24,cx=30,cy=30,circ=2*Math.PI*r;
+  const dash=circ*(pct/100);
+  return`<svg viewBox="0 0 60 60"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--color-border-tertiary)" stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/></svg>`;
+}
+
+function renderCirclesGrid(){
+  const grid=document.getElementById('circles-grid');
+  if(!grid)return;
+  const latest={};
+  DB.parts.forEach(p=>{
+    const n=p.name;
+    if(!latest[n]||p.date>latest[n].date)latest[n]=p;
+  });
+  const keys=Object.keys(latest);
+  if(!keys.length){grid.innerHTML='<p style="font-size:13px;color:var(--color-text-secondary);grid-column:1/-1;text-align:center;padding:10px">nenhum componente registrado ainda</p>';return;}
+  grid.innerHTML=keys.map(name=>{
+    const p=latest[name];
+    const pct=getPartPct(p);
+    const color=pctColor(pct);
+    const icon=getIcon(name);
+    const label=pct>=90?'<span class="tag tag-red">trocar</span>':pct>=65?'<span class="tag tag-amber">atenção</span>':'<span class="tag tag-green">ok</span>';
+    return`<div class="circle-item" onclick="openPartHistory('${name.replace(/'/g,"\\'")}')">
+      <div class="circle-wrap">${renderCircle(pct,color)}<div class="circle-icon">${icon}</div></div>
+      <div class="circle-label">${name}</div>
+      <div class="circle-pct" style="color:${color}">${pct}% desgaste</div>
+      <div style="margin-top:4px">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLastParts(){
+  const el=document.getElementById('last-parts');
+  if(!el)return;
+  const sorted=[...DB.parts].sort((a,b)=>b.date-a.date).slice(0,3);
+  if(!sorted.length){el.innerHTML='<div class="empty-state">nenhuma substituição registrada</div>';return;}
+  el.innerHTML=sorted.map(p=>`
+    <div class="mini-item">
+      <div><div class="label">${getIcon(p.name)} ${p.name}</div><div class="date">${p.brand} ${p.model}</div></div>
+      <div class="date">${fmt(p.date)}</div>
+    </div>`).join('');
+}
+
+function renderLastTrips(){
+  const el=document.getElementById('last-trips');
+  if(!el)return;
+  const sorted=[...DB.trips].sort((a,b)=>b.start-a.start).slice(0,3);
+  if(!sorted.length){el.innerHTML='<div class="empty-state">nenhum trajeto registrado</div>';return;}
+  el.innerHTML=sorted.map(t=>`
+    <div class="mini-item">
+      <div><div class="label">${fmtKm(t.km)}</div><div class="date">${fmt(t.start)}</div></div>
+      <div class="date">${new Date(t.start).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`).join('');
+}
+
+function renderHome(){
+  const km=DB.odometer||0;
+  const el=document.getElementById('home-km');
+  if(el)el.textContent=km.toLocaleString('pt-BR');
+  const tb=document.getElementById('topbar-km');
+  if(tb)tb.textContent=fmtKm(km);
+  renderCirclesGrid();
+  renderLastParts();
+  renderLastTrips();
+}
+
+function renderTrips(){
+  const activeArea=document.getElementById('trip-active-area');
+  const formDiv=document.getElementById('trip-form');
+  if(!activeArea)return;
+  if(DB.activeTrip){
+    const elapsed=Math.round((Date.now()-DB.activeTrip.startTime)/60000);
+    const h=Math.floor(elapsed/60),m=elapsed%60;
+    activeArea.innerHTML=`<div class="trip-active">
+      <div class="trip-time">${h>0?h+'h ':''}${m}min em andamento</div>
+      <div class="trip-info">saída: ${new Date(DB.activeTrip.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} — odôm. inicial: ${fmtKm(DB.activeTrip.odoStart)}</div>
+      <button class="btn btn-danger" style="margin-top:10px" onclick="openEndTrip()">finalizar trajeto</button>
+    </div>`;
+    if(formDiv)formDiv.style.display='none';
+  } else {
+    activeArea.innerHTML='';
+    if(formDiv)formDiv.style.display='block';
+  }
+  const hist=document.getElementById('trips-history');
+  if(!hist)return;
+  const sorted=[...DB.trips].sort((a,b)=>b.start-a.start);
+  if(!sorted.length){hist.innerHTML='<div class="empty-state">nenhum trajeto ainda</div>';return;}
+  hist.innerHTML=sorted.map(t=>`
+    <div class="history-item">
+      <div class="hi-left"><div class="hi-title">${fmtKm(t.km)}</div><div class="hi-sub">${new Date(t.start).toLocaleString('pt-BR')}</div></div>
+      <div class="hi-right"><div class="hi-title" style="color:#1D9E75">${fmtKm(t.odoEnd)}</div><div class="hi-sub">odôm. final</div></div>
+    </div>`).join('');
+}
+
+function startTrip(){
+  const odo=parseInt(document.getElementById('trip-odo-start').value);
+  if(!odo||odo<0)return alert('informe o odômetro inicial');
+  if(odo<DB.odometer)return alert('odômetro menor que o registrado');
+  DB.activeTrip={startTime:Date.now(),odoStart:odo};
+  DB.odometer=odo;
+  save();renderAll();
+}
+
+function openEndTrip(){
+  document.getElementById('modal-end-trip').classList.add('open');
+  document.getElementById('trip-odo-end').value='';
+  document.getElementById('trip-calc-preview').innerHTML='';
+}
+
+function endTrip(){
+  const odoEnd=parseInt(document.getElementById('trip-odo-end').value);
+  if(!odoEnd||odoEnd<=DB.activeTrip.odoStart)return alert('odômetro final inválido');
+  const km=odoEnd-DB.activeTrip.odoStart;
+  DB.trips.push({start:DB.activeTrip.startTime,end:Date.now(),odoStart:DB.activeTrip.odoStart,odoEnd,km});
+  DB.odometer=odoEnd;
+  DB.activeTrip=null;
+  save();closeModal('modal-end-trip');renderAll();
+}
+
+document.getElementById('trip-odo-end').addEventListener('input',function(){
+  const v=parseInt(this.value);
+  const prev=document.getElementById('trip-calc-preview');
+  if(DB.activeTrip&&v>DB.activeTrip.odoStart){
+    const km=v-DB.activeTrip.odoStart;
+    prev.innerHTML=`<div class="fuel-calc"><span class="big">${fmtKm(km)}</span> percorridos</div>`;
+  } else prev.innerHTML='';
+});
+
+function renderPartsComponents(){
+  const el=document.getElementById('parts-components');
+  if(!el)return;
+  const latest={};
+  DB.parts.forEach(p=>{if(!latest[p.name]||p.date>latest[p.name].date)latest[p.name]=p;});
+  const keys=Object.keys(latest);
+  if(!keys.length){el.innerHTML='<div class="empty-state">registre uma substituição para ver os componentes</div>';return;}
+  el.innerHTML=keys.map(name=>{
+    const p=latest[name];
+    const pct=getPartPct(p);
+    const color=pctColor(pct);
+    const count=DB.parts.filter(x=>x.name===name).length;
+    return`<div class="history-item" onclick="openPartHistory('${name.replace(/'/g,"\\'")}')">
+      <div class="hi-left">
+        <div class="hi-title">${getIcon(name)} ${name}</div>
+        <div class="hi-sub">${p.brand} ${p.model} — ${fmt(p.date)}</div>
+        <div class="hi-sub" style="margin-top:4px">${count} registro${count>1?'s':''}</div>
+      </div>
+      <div class="hi-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="color:${color};font-size:14px;font-weight:500">${pct}%</div>
+        ${renderCircle(pct,color).replace('viewBox="0 0 60 60"','viewBox="0 0 60 60" width="36" height="36"')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('part-select').addEventListener('change',function(){
+  document.getElementById('part-custom-group').style.display=this.value==='outro'?'block':'none';
+});
+
+function savePart(){
+  let name=document.getElementById('part-select').value;
+  if(!name)return alert('selecione um componente');
+  if(name==='outro'){name=document.getElementById('part-custom').value.trim();if(!name)return alert('informe o nome do componente');}
+  const brand=document.getElementById('part-brand').value.trim()||'—';
+  const model=document.getElementById('part-model').value.trim()||'—';
+  const odo=parseInt(document.getElementById('part-odo').value)||DB.odometer;
+  const kmLimit=parseInt(document.getElementById('part-km-limit').value)||0;
+  const monthLimit=parseInt(document.getElementById('part-month-limit').value)||0;
+  const notes=document.getElementById('part-notes').value.trim();
+  DB.parts.push({name,brand,model,odo,kmLimit,monthLimit,notes,date:Date.now()});
+  if(odo>DB.odometer)DB.odometer=odo;
+  save();
+  ['part-brand','part-model','part-odo','part-km-limit','part-month-limit','part-notes','part-custom'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('part-select').value='';
+  document.getElementById('part-custom-group').style.display='none';
+  alert('substituição registrada!');
+  renderAll();
+}
+
+function renderFuelStations(){
+  const sel=document.getElementById('fuel-station-select');
+  if(!sel)return;
+  const saved=sel.innerHTML.split('<option value="__new__">')[1]||'+ adicionar novo posto</option>';
+  sel.innerHTML='<option value="">selecionar posto...</option>'+DB.stations.map(s=>`<option value="${s}">${s}</option>`).join('')+'<option value="__new__">+ adicionar novo posto</option>';
+}
+
+function fuelStationChanged(){
+  const v=document.getElementById('fuel-station-select').value;
+  document.getElementById('fuel-station-new-group').style.display=v==='__new__'?'block':'none';
+}
+
+function renderFuelCalc(){
+  const isFull=document.getElementById('fuel-full').checked;
+  const area=document.getElementById('fuel-calc-area');
+  if(!isFull){area.innerHTML='';return;}
+  const odo=parseInt(document.getElementById('fuel-odo').value)||0;
+  const lastFull=DB.fuels.filter(f=>f.full).sort((a,b)=>b.date-a.date)[0];
+  if(lastFull&&odo>lastFull.odo){
+    const kmRod=odo-lastFull.odo;
+    const litros=parseFloat(document.getElementById('fuel-liters').value)||0;
+    if(litros>0){
+      const media=(kmRod/litros).toFixed(1);
+      area.innerHTML=`<div class="fuel-calc">média: <span class="big">${media} km/L</span> (${kmRod.toLocaleString('pt-BR')} km / ${litros} L)</div>`;
+    } else area.innerHTML=`<div class="fuel-calc">informe os litros para calcular a média</div>`;
+  } else area.innerHTML=`<div class="fuel-calc">nenhum tanque cheio anterior registrado para comparar</div>`;
+}
+
+function saveFuel(){
+  const liters=parseFloat(document.getElementById('fuel-liters').value);
+  if(!liters||liters<=0)return alert('informe os litros abastecidos');
+  const type=document.getElementById('fuel-type').value;
+  const odo=parseInt(document.getElementById('fuel-odo').value)||DB.odometer;
+  const price=parseFloat(document.getElementById('fuel-price').value)||0;
+  const full=document.getElementById('fuel-full').checked;
+  let station=document.getElementById('fuel-station-select').value;
+  if(station==='__new__'){
+    station=document.getElementById('fuel-station-new').value.trim();
+    if(station&&!DB.stations.includes(station))DB.stations.push(station);
+  }
+  let media=null;
+  if(full){
+    const lastFull=DB.fuels.filter(f=>f.full).sort((a,b)=>b.date-a.date)[0];
+    if(lastFull&&odo>lastFull.odo)media=((odo-lastFull.odo)/liters).toFixed(1);
+  }
+  DB.fuels.push({liters,type,odo,price,full,station,media,date:Date.now()});
+  if(odo>DB.odometer)DB.odometer=odo;
+  save();
+  ['fuel-liters','fuel-odo','fuel-price'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fuel-full').checked=false;
+  document.getElementById('fuel-station-new').value='';
+  document.getElementById('fuel-station-new-group').style.display='none';
+  document.getElementById('fuel-calc-area').innerHTML='';
+  alert('abastecimento registrado!');
+  renderAll();
+}
+
+function renderFuelHistory(){
+  const el=document.getElementById('fuel-history');
+  if(!el)return;
+  const sorted=[...DB.fuels].sort((a,b)=>b.date-a.date);
+  if(!sorted.length){el.innerHTML='<div class="empty-state">nenhum abastecimento ainda</div>';return;}
+  el.innerHTML=sorted.map(f=>`
+    <div class="history-item">
+      <div class="hi-left">
+        <div class="hi-title">${f.liters} L — ${f.type}</div>
+        <div class="hi-sub">${f.station||'posto não informado'} ${f.price?'· R$'+Number(f.price).toFixed(2)+'/L':''}</div>
+        ${f.media?`<div class="hi-sub" style="color:#1D9E75;margin-top:2px">média: ${f.media} km/L</div>`:''}
+      </div>
+      <div class="hi-right">
+        <div class="hi-sub">${fmt(f.date)}</div>
+        ${f.full?'<div class="tag tag-green" style="margin-top:4px">cheio</div>':''}
+      </div>
+    </div>`).join('');
+}
+
+function openPartHistory(name){
+  const records=DB.parts.filter(p=>p.name===name).sort((a,b)=>b.date-a.date);
+  document.getElementById('modal-part-title').textContent=`${getIcon(name)} ${name}`;
+  document.getElementById('modal-part-content').innerHTML=records.length?records.map(p=>{
+    const pct=DB.parts.indexOf(p)===DB.parts.map(x=>x.name===name?x:null).filter(Boolean).sort((a,b)=>b.date-a.date).indexOf(p)?getPartPct(p):null;
+    return`<div class="history-item" style="cursor:default">
+      <div class="hi-left">
+        <div class="hi-title">${p.brand} ${p.model}</div>
+        <div class="hi-sub">odôm: ${fmtKm(p.odo)} · ${fmt(p.date)}</div>
+        ${p.kmLimit?`<div class="hi-sub">trocar em: ${fmtKm(p.kmLimit)}</div>`:''}
+        ${p.monthLimit?`<div class="hi-sub">trocar em: ${p.monthLimit} meses</div>`:''}
+        ${p.notes?`<div class="hi-sub" style="margin-top:4px;font-style:italic">${p.notes}</div>`:''}
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty-state">sem registros</div>';
+  document.getElementById('modal-part-history').classList.add('open');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')});
+});
+
+document.getElementById('fuel-liters').addEventListener('input',renderFuelCalc);
+document.getElementById('fuel-odo').addEventListener('input',renderFuelCalc);
+
+function renderAll(){
+  const km=DB.odometer||0;
+  const tb=document.getElementById('topbar-km');
+  if(tb)tb.textContent=fmtKm(km);
+  renderHome();
+  renderTrips();
+  renderPartsComponents();
+  renderFuelStations();
+  renderFuelHistory();
+}
+
+load();renderAll();
+
+setInterval(()=>{if(DB.activeTrip)renderTrips();},30000);
+</script>
