@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-tittle" content="Moto-Track">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MotoTrack">
   
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
@@ -40,10 +41,51 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .circle-info-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 0px; }
 
 .app{max-width:430px;margin:0 auto;background:var(--color-background-tertiary);min-height:100vh;padding-bottom:80px}
-.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.topbar h1{font-size:17px;font-weight:500}
-.topbar .km-badge{font-size:12px;background:var(--color-background-secondary);padding:4px 10px;border-radius:20px;color:var(--color-text-secondary)}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:flex;z-index:200}
+.topbar {
+  background: #000000; 
+  border-bottom: 1px solid var(--color-border-tertiary);
+  padding: 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1000; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+}
+
+.topbar h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  /* color: var(--color-text-primary); */
+  color :#ffffff;
+}
+
+.topbar .km-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--color-background-secondary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: #ffffff; /* Destaque na cor principal para o KM */
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff; 
+  border-top: 1px solid var(--color-border-tertiary);
+  display: flex;
+  z-index: 1000; 
+  padding-bottom: env(safe-area-inset-bottom); 
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.171); 
+}
 .nav button{flex:1;padding:10px 4px 8px;border:none;background:transparent;cursor:pointer;font-size:10px;color:var(--color-text-secondary);display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s}
 .nav button.active{color:#1D9E75}
 .nav-icon{width:22px;height:22px}
@@ -93,11 +135,52 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .hi-title{font-size:14px;font-weight:500}
 .hi-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
 .hi-right{text-align:right}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.295); 
+  z-index: 2000;
+  align-items: center;     
+  justify-content: center;  
+  padding: 20px;
+}
 .modal-overlay.open{display:flex}
-.modal{background:var(--color-background-primary);border-radius:20px 20px 0 0;padding:20px 16px 30px;width:100%;max-width:430px;max-height:85vh;overflow-y:auto}
+.modal {
+  background: #ffffff; 
+  border-radius: 16px; 
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 380px;     
+  max-height: 80vh;      
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: modalPop 0.2s ease-out; 
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 .modal h2{font-size:16px;font-weight:500;margin-bottom:14px}
-.modal-close{float:right;background:var(--color-background-secondary);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;color:var(--color-text-secondary)}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--color-background-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .fuel-calc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-top:8px;font-size:13px}
 .fuel-calc .big{font-size:20px;font-weight:500;color:#1D9E75}
 .empty-state{text-align:center;padding:30px 20px;color:var(--color-text-secondary);font-size:14px}
@@ -105,6 +188,29 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 .tab{padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);white-space:nowrap;transition:all .15s}
 .tab.active{background:#1D9E75;color:#fff;border-color:#1D9E75}
 .sep{height:0.5px;background:var(--color-border-tertiary);margin:10px 0}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 8px;
+}
+.stat-box {
+  background: var(--color-background-secondary);
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+.stat-box span {
+  display: block;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+.stat-box b {
+  font-size: 14px;
+  color: #1D9E75;
+}
+
 </style>
 
 <div class="app" id="app">
@@ -315,16 +421,25 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);co
 <!-- MODAL FIM DE TRAJETO -->
 <div class="modal-overlay" id="modal-end-trip">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('modal-end-trip')">✕</button>
-    <h2>finalizar trajeto</h2>
-    <div class="form-group">
-      <label>odômetro no fim (km)</label>
-      <input type="number" id="trip-odo-end" placeholder="ex: 12520">
-    </div>
-    <div id="trip-calc-preview"></div>
-    <button class="btn" onclick="endTrip()">salvar trajeto</button>
+  <button class="modal-close" onclick="closeModal('modal-end-trip')">✕</button>
+  <h2>Finalizar Trajeto</h2>
+  
+  <div class="form-group">
+    <label>Odômetro no fim (km)</label>
+    <input type="number" id="trip-odo-end" placeholder="ex: 12520">
   </div>
-</div>
+
+  <div class="section-title">Dados do Painel (Opcional)</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Consumo Médio (km/L)</label>
+        <input type="number" step="0.1" id="trip-avg-fuel" placeholder="ex: 25.5">
+      </div>
+    </div>
+      <div id="trip-calc-preview"></div>
+        <button class="btn" onclick="endTrip()">Salvar Trajeto</button>
+      </div>
+  </div>
 </head>
 
 </html>
@@ -487,32 +602,78 @@ function renderHome(){
   renderLastTrips();
 }
 
-function renderTrips(){
-  const activeArea=document.getElementById('trip-active-area');
-  const formDiv=document.getElementById('trip-form');
-  if(!activeArea)return;
-  if(DB.activeTrip){
-    const elapsed=Math.round((Date.now()-DB.activeTrip.startTime)/60000);
-    const h=Math.floor(elapsed/60),m=elapsed%60;
-    activeArea.innerHTML=`<div class="trip-active">
-      <div class="trip-time">${h>0?h+'h ':''}${m}min em andamento</div>
-      <div class="trip-info">saída: ${new Date(DB.activeTrip.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} — odôm. inicial: ${fmtKm(DB.activeTrip.odoStart)}</div>
-      <button class="btn btn-danger" style="margin-top:10px" onclick="openEndTrip()">finalizar trajeto</button>
-    </div>`;
-    if(formDiv)formDiv.style.display='none';
+function renderTrips() {
+  const activeArea = document.getElementById('trip-active-area');
+  const formDiv = document.getElementById('trip-form');
+  
+  if (!activeArea) return;
+
+  // 1. Renderiza o Card de Trajeto Ativo (se houver um)
+  if (DB.activeTrip) {
+    const elapsed = Math.round((Date.now() - DB.activeTrip.startTime) / 60000);
+    const h = Math.floor(elapsed / 60);
+    const m = elapsed % 60;
+    
+    activeArea.innerHTML = `
+      <div class="trip-active">
+        <div class="trip-time">${h > 0 ? h + 'h ' : ''}${m}min em andamento</div>
+        <div class="trip-info">Saída: ${new Date(DB.activeTrip.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} — Odôm. inicial: ${fmtKm(DB.activeTrip.odoStart)}</div>
+        <button class="btn btn-danger" style="margin-top:10px" onclick="openEndTrip()">finalizar trajeto</button>
+      </div>`;
+    if (formDiv) formDiv.style.display = 'none';
   } else {
-    activeArea.innerHTML='';
-    if(formDiv)formDiv.style.display='block';
+    activeArea.innerHTML = '';
+    if (formDiv) formDiv.style.display = 'block';
   }
-  const hist=document.getElementById('trips-history');
-  if(!hist)return;
-  const sorted=[...DB.trips].sort((a,b)=>b.start-a.start);
-  if(!sorted.length){hist.innerHTML='<div class="empty-state">nenhum trajeto ainda</div>';return;}
-  hist.innerHTML=sorted.map(t=>`
-    <div class="history-item">
-      <div class="hi-left"><div class="hi-title">${fmtKm(t.km)}</div><div class="hi-sub">${new Date(t.start).toLocaleString('pt-BR')}</div></div>
-      <div class="hi-right"><div class="hi-title" style="color:#1D9E75">${fmtKm(t.odoEnd)}</div><div class="hi-sub">odôm. final</div></div>
-    </div>`).join('');
+
+  // 2. Renderiza o Histórico de Trajetos
+  const hist = document.getElementById('trips-history');
+  if (!hist) return;
+
+  const sorted = [...DB.trips].sort((a, b) => b.start - a.start);
+  
+  if (!sorted.length) {
+    hist.innerHTML = '<div class="empty-state">nenhum trajeto ainda</div>';
+    return;
+  }
+
+  hist.innerHTML = sorted.map(t => {
+    // Cálculo de tempo de duração para exibição
+    const duracaoMs = t.end - t.start;
+    const durMinTotal = Math.round(duracaoMs / 60000);
+    const durH = Math.floor(durMinTotal / 60);
+    const durM = durMinTotal % 60;
+    const tempoFormatado = durH > 0 ? `${durH}h ${durM}min` : `${durM}min`;
+
+    return `
+      <div class="history-item" style="flex-direction: column; align-items: stretch; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; width: 100%;">
+          <div class="hi-left">
+            <div class="hi-title">${fmtKm(t.km)}</div>
+            <div class="hi-sub">${new Date(t.start).toLocaleDateString('pt-BR')} às ${new Date(t.start).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+          <div class="hi-right">
+            <div class="hi-title" style="color:#1D9E75">${fmtKm(t.odoEnd)}</div>
+            <div class="hi-sub">odômetro final</div>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 4px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 8px;">
+           <div class="stat-box">
+             <span>Duração</span>
+             <b>${tempoFormatado}</b>
+           </div>
+           <div class="stat-box">
+             <span>Consumo Painel</span>
+             <b>${t.avgFuel ? t.avgFuel + ' km/L' : '--'}</b>
+           </div>
+           <div class="stat-box">
+             <span>Vel. Média (calc)</span>
+             <b>${t.avgSpeedGPS} km/h</b>
+           </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function startTrip(){
@@ -531,13 +692,35 @@ function openEndTrip(){
 }
 
 function endTrip(){
-  const odoEnd=parseInt(document.getElementById('trip-odo-end').value);
-  if(!odoEnd||odoEnd<=DB.activeTrip.odoStart)return alert('odômetro final inválido');
-  const km=odoEnd-DB.activeTrip.odoStart;
-  DB.trips.push({start:DB.activeTrip.startTime,end:Date.now(),odoStart:DB.activeTrip.odoStart,odoEnd,km});
-  DB.odometer=odoEnd;
-  DB.activeTrip=null;
-  save();closeModal('modal-end-trip');renderAll();
+  const odoEnd = parseInt(document.getElementById('trip-odo-end').value);
+  const avgFuel = parseFloat(document.getElementById('trip-avg-fuel').value) || null;
+
+  if (!odoEnd || odoEnd <= DB.activeTrip.odoStart) return alert('Odômetro final inválido');
+
+  const km = odoEnd - DB.activeTrip.odoStart;
+  const startTime = DB.activeTrip.startTime;
+  const endTime = Date.now();
+  
+  // Cálculo de velocidade média (Distância / Tempo em horas)
+  const tempoHoras = (endTime - startTime) / (1000 * 60 * 60);
+  const avgSpeedCalculated = Math.round(km / tempoHoras);
+
+  DB.trips.push({
+    start: startTime,
+    end: endTime,
+    odoStart: DB.activeTrip.odoStart,
+    odoEnd: odoEnd,
+    km: km,
+    avgFuel: avgFuel, // Média de consumo do painel
+    avgSpeedGPS: avgSpeedCalculated // Velocidade calculada pelo tempo
+  });
+
+  DB.odometer = odoEnd;
+  DB.activeTrip = null;
+  
+  save();
+  closeModal('modal-end-trip');
+  renderAll();
 }
 
 document.getElementById('trip-odo-end').addEventListener('input',function(){
